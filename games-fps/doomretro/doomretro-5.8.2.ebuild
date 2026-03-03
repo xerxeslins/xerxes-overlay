@@ -21,17 +21,32 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_install() {
-        # Instala o binário compilado em /usr/bin
-        dobin "${BUILD_DIR}/${PN}"
+        # 1. Instala o binário real em libexec (executável oculto)
+        exeinto /usr/libexec
+        newexe "${BUILD_DIR}/${PN}" "${PN}-bin"
 
-        # Instala o WAD obrigatório em /usr/share/doom
+        # 2. Instala o WAD obrigatório em /usr/share
         insinto /usr/share/doom
         doins "${BUILD_DIR}/${PN}.wad"
 
-        # Cria o link simbólico para o jogo achar o WAD (Correção do erro anterior)
-        dosym ../share/doom/doomretro.wad /usr/bin/doomretro.wad
+        # 3. Cria o link simbólico usando EAPI 8 (-r calcula o caminho relativo automático)
+        dosym -r /usr/share/doom/${PN}.wad /usr/libexec/${PN}.wad
 
-        # Criação do atalho no menu
+        # 4. Gera o script wrapper dinamicamente durante a instalação
+        cat << 'EOF' > "${T}/doomretro"
+#!/bin/bash
+# Define e cria o diretório de configuração do usuário logado
+CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/doomretro"
+mkdir -p "$CFG_DIR"
+
+# Executa o binário real repassando o config e quaisquer outros argumentos ($@)
+exec /usr/libexec/doomretro-bin -config "$CFG_DIR/doomretro.cfg" "$@"
+EOF
+
+        # 5. Instala o script wrapper no PATH do sistema
+        dobin "${T}/doomretro"
+
+        # 6. Criação do atalho no menu
         make_desktop_entry "${PN}" "DOOM Retro" "doomretro" "Game;ActionGame;"
 
         einstalldocs
