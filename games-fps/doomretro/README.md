@@ -1,8 +1,18 @@
+```markdown
 ### Gentoo Linux
 
 DOOM Retro is available for Gentoo Linux via the [xerxes-overlay](https://github.com/xerxeslins/xerxes-overlay) repository.
 
-**Stable version:**
+**Prerequisites (Dependencies & Keywords):**
+
+```bash
+mkdir -p /etc/portage/package.accept_keywords /etc/portage/package.use
+echo "games-fps/doomretro ~amd64" >> /etc/portage/package.accept_keywords/doomretro
+echo "media-libs/sdl2-mixer fluidsynth midi mp3 vorbis wav" >> /etc/portage/package.use/sdl2-mixer
+
+```
+
+**Latest Release:**
 
 ```bash
 eselect repository enable xerxes-overlay
@@ -14,8 +24,7 @@ emerge games-fps/doomretro
 **Live version (latest git commit):**
 
 ```bash
-mkdir -p /etc/portage/package.accept_keywords
-echo "=games-fps/doomretro-9999 **" > /etc/portage/package.accept_keywords/doomretro
+echo "=games-fps/doomretro-9999 **" >> /etc/portage/package.accept_keywords/doomretro
 emerge =games-fps/doomretro-9999
 
 ```
