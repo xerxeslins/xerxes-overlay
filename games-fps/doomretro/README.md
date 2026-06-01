@@ -1,4 +1,3 @@
-```markdown
 ### Gentoo Linux
 
 DOOM Retro is available for Gentoo Linux via the [xerxes-overlay](https://github.com/xerxeslins/xerxes-overlay) repository.
